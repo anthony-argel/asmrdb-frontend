@@ -1,5 +1,6 @@
 import Login from './components/login';
 import Channel from './components/channel';
+import Register from './components/register';
 import Home from './components/home';
 import NavBar from './components/navbar';
 import { useEffect, useState } from "react";
@@ -45,9 +46,6 @@ function App() {
     }
   }
 
-  function logOut() {
-  }
-
   useEffect(() => {
   }, [loggedIn])
 
@@ -66,6 +64,7 @@ function App() {
         <Switch>
           <Route path='/' exact><Home apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/channel/:id' exact><Channel apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/register' exact><Register loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/login' exact><Login setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>
           <Route path='/channels' exact><Channel apiURL={apiURL}/></Route>
         </Switch>

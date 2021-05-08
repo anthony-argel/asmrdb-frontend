@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import { Redirect } from 'react-router-dom';
+import {useState} from 'react';
+import { Link, Redirect } from 'react-router-dom';
 
 function Login(props) {
     const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ function Login(props) {
                 mode: 'cors'
             })
             .then(res => {
-                if(res.status === 400){
+                if(res.status !== 200){
                     setError(true);
                 }
                 else {
@@ -55,7 +55,12 @@ function Login(props) {
                             onChange={e=>setPassword(e.target.value)}/>
                     </div>
                     <button type='submit' className='btn btn-primary'>Submit</button>
+                    {error === true ? <p className='text-center text-danger'>Email or password was incorrect. Please try again.</p> : null}
                 </form>
+                <hr/>
+                <div className='text-center'>
+                    <Link to='/register'>Create an Account</Link>
+                </div>
             </div>
         </div>
     </div>)

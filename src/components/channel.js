@@ -66,7 +66,7 @@ function Channel(props) {
                         setPersonalReviewData(reviews[i]);
                     }
                 }
-                setRating(avgRating);
+                setRating(avgRating / reviews.length);
                 setNumberOfRaters(reviews.length);
                 setCommentList(res.comments);
             });
@@ -154,6 +154,10 @@ function Channel(props) {
         );
     }
 
+    const deleteReview = () => {
+        alert('kappa');
+    }
+
     return (
         <div className='container'>
             
@@ -201,8 +205,8 @@ function Channel(props) {
                             <p># Uploaded Videos: {channel.videocount}</p>
                         </div>
                     }
-                    <p>Rating: {rating}/10 (votes: {numberOfRaters})</p>
-                    <p>Your Rating: {typeof personalReviewData === 'undefined' ? '-' : personalReviewData.rating}</p>
+                    <p>Rating: {rating.toFixed(1)}/10 (votes: {numberOfRaters})</p>
+                    <p>Your Rating: {typeof personalReviewData === 'undefined' ? '-' : <span>{personalReviewData.rating}<MdClose cursor='pointer' color='red' size='1.5em' onClick={() => deleteReview()}/></span>}</p> 
                     <button type="button" className="btn btn-success" data-bs-toggle='modal' data-bs-target='#reviewForm'>
                     {typeof personalReviewData === 'undefined' ? 'Add Review' : 'Edit Review'}</button>
                 </div>
