@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
 function Login(props) {
@@ -7,6 +7,9 @@ function Login(props) {
     const [error, setError] = useState(false);
 
 
+    useEffect(() => {
+        document.title = 'ASMRdb';
+    }, [])
 
     function login(e){
         if(props.apiURL !== '') {

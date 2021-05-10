@@ -1,5 +1,5 @@
 import {Link } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {FaSearch} from 'react-icons/fa';
 
 const NavBar = (props) => {
@@ -20,7 +20,7 @@ const NavBar = (props) => {
                 <div className='collapse navbar-collapse d-flex ' id='navContent-l'>
                     <ul className='navbar-nav'>
                         <li className='nav-item'>
-                            <Link to='/imageboard' className='nav-link text-white'>Imageboard</Link>
+                            <Link to='/discussion' className='nav-link text-white'>Discussion</Link>
                         </li>
                         <li className='nav-item'>
                             <Link to='/rules' className='nav-link text-white'>Rules</Link>

@@ -3,6 +3,7 @@ import Channel from './components/channel';
 import Register from './components/register';
 import Home from './components/home';
 import NavBar from './components/navbar';
+import User from './components/user';
 import { useEffect, useState } from "react";
 import './styles/App.css';
 
@@ -64,6 +65,7 @@ function App() {
         <Switch>
           <Route path='/' exact><Home apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/channel/:id' exact><Channel apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/user/:id' exact><User apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/register' exact><Register loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/login' exact><Login setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>
           <Route path='/channels' exact><Channel apiURL={apiURL}/></Route>

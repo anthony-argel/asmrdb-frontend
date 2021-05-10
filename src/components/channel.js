@@ -12,10 +12,14 @@ function Channel(props) {
     const [commentList, setCommentList] = useState([]);
 
 
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState(0); //avg rating?
     const [numberOfRaters, setNumberOfRaters] = useState(0);
+    const [ratersList, setRatersList] = useState([]);
     const [userid, setUserId] = useState();
     const [personalReviewData, setPersonalReviewData] = useState();
+    const [reviewList, setReviewList] = useState([]);
+
+    const [userReviewData, setUserReviewData] = useState([]);
 
     const [formRating, setFormRating] = useState();
     const [formReview, setFormReview] = useState();
@@ -59,13 +63,27 @@ function Channel(props) {
                 setChannel(res.channel);
                 let reviews = res.ratings;
                 let avgRating = 0;
+                let foundRating = false;
+                let newRatingsArray = [0,0,0,0,0,0,0,0,0,0,0];
                 for(let i = 0; i < reviews.length; i++) {
                     avgRating += reviews[i].rating;
-                
-                    if(typeof userid !== 'undefined' && userid === reviews[i].raterid) {
+                    newRatingsArray[reviews[i].rating]++;
+                    
+                    if(typeof userid !== 'undefined' && userid === reviews[i].raterid._id) {
                         setPersonalReviewData(reviews[i]);
+                        foundRating = true;
                     }
                 }
+                if(foundRating === false) {
+                    setPersonalReviewData(-1);
+                }
+                if (reviews.length > 10) {
+                    setReviewList(reviews.slice(0,10))
+                }
+                else {
+                    setReviewList(reviews);
+                }
+                setRatersList(newRatingsArray);
                 setRating(avgRating / reviews.length);
                 setNumberOfRaters(reviews.length);
                 setCommentList(res.comments);
@@ -155,7 +173,20 @@ function Channel(props) {
     }
 
     const deleteReview = () => {
-        alert('kappa');
+        if(props.apiURL !== '') {
+            fetch(props.apiURL + '/channelrating/' +id, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization' : 'Bearer ' + token},
+                mode: 'cors'
+            })
+            .then(res => {
+                if (res.status === 200) {
+                    setRequestingRefresh(!requestingRefresh);
+                }
+            })
+        }
     }
 
     return (
@@ -178,6 +209,12 @@ function Channel(props) {
                             <h1>{channel.name}</h1>
                             {typeof channel.aliases !== 'undefined' && channel.aliases !== channel.name ? <h3>Alias: {channel.aliases}</h3> : null}
                             <p>Status: {channel.status}</p>
+                            {typeof channel === 'undefined' ? null :
+                            <div>
+                                <p># Channel Views: {channel.viewcount}</p>
+                                <p># Uploaded Videos: {channel.videocount}</p>
+                            </div>
+                    }
                             <p>Tags: TO-DO</p>
                             <div className='socials'>
                             {typeof channel === 'undefined' ?  <p>Loading</p> : 
@@ -189,31 +226,73 @@ function Channel(props) {
                 </div>
             </div>
 
+
             {/* stats */}
             <div className='row mt-3 bg-light' style={{minHeight:'25vh'}}>
-                <div className='col-12  col-lg-4  p-3 d-flex flex-column  align-items-center'>
-                    <p>Most Popular Video</p>
-                    <div className="embed-responsive embed-responsive-1by1">
-                      <iframe title='channelvideo' className="embed-responsive-item" src="https://www.youtube.com/embed/KQY9zrjPBjo" allowFullScreen></iframe>
-                    </div>
-                </div>
-                <div className='col-12 col-lg-8 p-3'>
-                    <p className='text-center'>Statistics</p>
-                    {typeof channel === 'undefined' ? null :
+                <p className='text-center pt-3 fs-3 mb-0'>Statistics</p><hr/>
+                <div className='col-12 col-lg-6 p-3'>
+                    {ratersList.length > 0 ? 
                         <div>
-                            <p>Channel View Count: {channel.viewcount}</p>
-                            <p># Uploaded Videos: {channel.videocount}</p>
-                        </div>
-                    }
-                    <p>Rating: {rating.toFixed(1)}/10 (votes: {numberOfRaters})</p>
-                    <p>Your Rating: {typeof personalReviewData === 'undefined' ? '-' : <span>{personalReviewData.rating}<MdClose cursor='pointer' color='red' size='1.5em' onClick={() => deleteReview()}/></span>}</p> 
-                    <button type="button" className="btn btn-success" data-bs-toggle='modal' data-bs-target='#reviewForm'>
-                    {typeof personalReviewData === 'undefined' ? 'Add Review' : 'Edit Review'}</button>
-                </div>
+                            <p className='text-center'>Ratings</p>
+                            {ratersList.map((value, index) => {
+                                return (
+                                    <div key={`review-count-${index}`}>
+                                        
+                                        <div className="progress mt-3" style={{height:'1.7em'}}>
+                                            <p>{index}:</p>
+                                            <div className="progress-bar" role="progressbar" style={{width: `${value / Math.max(...ratersList) * 100}%`}} aria-valuenow={value} aria-valuemin="0" aria-valuemax={Math.max(...ratersList)}>{value}</div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div> 
+                        : null}
+                        <hr/>
+                    <div className='text-center'>
+                        <p className='mt-3'>Rating: {rating === 10 ? rating : rating.toFixed(1)}/10 (votes: {numberOfRaters})</p>
 
+                        <p>Your Rating: {typeof personalReviewData === 'undefined' || personalReviewData === -1 ?
+                        '-' : 
+                        <span>{personalReviewData.rating}<MdClose cursor='pointer' color='red' size='1.5em' onClick={() => deleteReview()}/></span>}</p> 
+
+                        <button type="button" className="btn btn-success" data-bs-toggle='modal' data-bs-target='#reviewForm'>
+                        {typeof personalReviewData === 'undefined' || personalReviewData === -1 ? 'Add Review' : 'Edit Review'}</button>
+
+
+                    </div>
+
+                        
+                </div>
+                
+                <div className='col-12 col-lg-6 d-flex flex-column align-items-center p-3'>
+                    <p>Recent Reviews</p>
+                    {reviewList.length > 0 ? 
+                    reviewList.map((value, index) => {
+                       return <p key={`latest-reviews-${index}`} style={{cursor:'pointer'}} data-bs-toggle='modal' 
+                       data-bs-target='#reviewShow' onClick={() => setUserReviewData([value.review, value.rating, value.raterid.username])}>
+                           {value.raterid.username} ({value.rating})</p>
+                    })
+                    : <p>None</p>}
+                </div>
             </div>
 
-
+            {/* Modal Specific Review */}
+            <div className="modal fade" id="reviewShow" tabIndex="-1" aria-labelledby="reviewShowLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="reviewShowLabel">{userReviewData[2]}'s review <br/>{userReviewData[1]}/10</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                        <p>{typeof userReviewData[0] !== 'undefined' ? userReviewData[0] : 'User did not write a review.'}</p>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
 
 
             {/* Modal Review */}
@@ -250,20 +329,6 @@ function Channel(props) {
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             {/* comment section */}
