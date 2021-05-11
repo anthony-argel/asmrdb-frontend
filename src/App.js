@@ -1,8 +1,10 @@
 import Login from './components/login';
 import Channel from './components/channel';
+import Channels from './components/channels';
 import Register from './components/register';
 import Home from './components/home';
 import NavBar from './components/navbar';
+import Tags from './components/tags';
 import User from './components/user';
 import { useEffect, useState } from "react";
 import './styles/App.css';
@@ -67,8 +69,9 @@ function App() {
           <Route path='/channel/:id' exact><Channel apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/user/:id' exact><User apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/register' exact><Register loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/tags' exact><Tags loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/login' exact><Login setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>
-          <Route path='/channels' exact><Channel apiURL={apiURL}/></Route>
+          <Route path='/channels' exact><Channels setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>        
         </Switch>
       </HashRouter>
     </div>

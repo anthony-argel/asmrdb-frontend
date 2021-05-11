@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {FaTwitter, FaYoutube} from 'react-icons/fa';
+import {FaTwitter, FaYoutube, FaPlus} from 'react-icons/fa';
 import {MdClose} from 'react-icons/md'
 import {DateTime} from 'luxon';
 
@@ -25,6 +25,9 @@ function Channel(props) {
     const [formReview, setFormReview] = useState();
 
     const [requestingRefresh, setRequestingRefresh]  = useState(false);
+
+    const [allTags, setAllTags] = useState([]);
+    const [channelTags, setChannelTags] = useState([]);
 
     const refreshComments = () => {
         if(props.apiURL !== '') {
@@ -68,7 +71,6 @@ function Channel(props) {
                 for(let i = 0; i < reviews.length; i++) {
                     avgRating += reviews[i].rating;
                     newRatingsArray[reviews[i].rating]++;
-                    
                     if(typeof userid !== 'undefined' && userid === reviews[i].raterid._id) {
                         setPersonalReviewData(reviews[i]);
                         foundRating = true;
@@ -77,6 +79,9 @@ function Channel(props) {
                 if(foundRating === false) {
                     setPersonalReviewData(-1);
                 }
+
+                reviews.sort((a,b) => {
+                    return DateTime.fromISO(b.date).toMillis() - DateTime.fromISO(a.date).toMillis();})
                 if (reviews.length > 10) {
                     setReviewList(reviews.slice(0,10))
                 }
@@ -87,6 +92,8 @@ function Channel(props) {
                 setRating(avgRating / reviews.length);
                 setNumberOfRaters(reviews.length);
                 setCommentList(res.comments);
+                setAllTags(res.allTags);
+                setChannelTags(res.channelTags);
             });
         }
     }, [props.apiURL, id, userid, requestingRefresh]);
@@ -184,10 +191,70 @@ function Channel(props) {
             .then(res => {
                 if (res.status === 200) {
                     setRequestingRefresh(!requestingRefresh);
+                    Array.from(document.querySelectorAll("input")).forEach(
+                        input => (input.value = "")
+                    );
+                    Array.from(document.querySelectorAll("textarea")).forEach(
+                        input => (input.value = "")
+                    );
                 }
             })
         }
     }
+
+    function addTag(e) {
+        e.preventDefault();
+        if(props.apiURL !== '') {
+            let tagId = 0;
+            let selectedTag = document.getElementById('tag').value;
+            for(let i = 0; i < allTags.length; i++) {
+                if(allTags[i].name === selectedTag) {
+                    tagId = allTags[i]._id;
+                }
+            }
+
+            if(tagId !== 0) {
+                console.log(props.apiURL + '/channel/' +id+'/tag');
+                fetch(props.apiURL + '/channel/' +id+'/tag', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        tagid: tagId
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization' : 'Bearer ' + token},
+                    mode: 'cors'
+                })
+                .then(res => {
+                    setRequestingRefresh(!requestingRefresh);
+                })
+            }
+            else {
+            }
+        }
+    }
+
+    function deleteTag(e, idToDelete) {
+        e.preventDefault();
+        console.log(idToDelete);
+        if(props.apiURL !== '') {
+            fetch(props.apiURL + '/channel/' +id+'/tag', {
+                method: 'DELETE',
+                body: JSON.stringify({
+                    id: idToDelete
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization' : 'Bearer ' + token},
+                mode: 'cors'
+            })
+            .then(res => {
+                setRequestingRefresh(!requestingRefresh);
+            })
+
+        }
+    }
+
 
     return (
         <div className='container'>
@@ -215,7 +282,7 @@ function Channel(props) {
                                 <p># Uploaded Videos: {channel.videocount}</p>
                             </div>
                     }
-                            <p>Tags: TO-DO</p>
+                            
                             <div className='socials'>
                             {typeof channel === 'undefined' ?  <p>Loading</p> : 
                                <a href={'https://twitter.com/'+channel.twitter} target="_blank" rel="noopener noreferrer" ><FaTwitter size='2em'/></a>}
@@ -223,6 +290,27 @@ function Channel(props) {
 
                             </div>
                             </div>}  
+                            <hr/>
+                            <div><p>Tags:</p>
+                            {channelTags.length > 0 ? 
+                            channelTags.map((value, index) => {
+                                return <span className='' key={value._id}>{value.tagid.name}<MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value._id)}/></span>
+                            })
+                            : null}
+                            </div>
+                            
+                            {allTags.length > 0 ? 
+                            <form className='mt-3'>
+                                <label htmlFor='tag'></label>
+                                <input list='tags' name='tag' id='tag'/>
+                                <datalist id='tags'>
+                                    {allTags.map((value, index) => {
+                                        return <option key={value._id} data-tag-id={value._id} value={value.name}></option>
+                                    })}
+                                </datalist>
+                                <button type="button" className="btn btn-success" onClick={(e) => addTag(e)}>Add Tag</button>
+                            </form>
+                            : 'no kappa'}
                 </div>
             </div>
 
@@ -249,7 +337,7 @@ function Channel(props) {
                         : null}
                         <hr/>
                     <div className='text-center'>
-                        <p className='mt-3'>Rating: {rating === 10 ? rating : rating.toFixed(1)}/10 (votes: {numberOfRaters})</p>
+                        <p className='mt-3'>Average Rating: {rating === 10 ? rating : rating.toFixed(1)}/10 (votes: {numberOfRaters})</p>
 
                         <p>Your Rating: {typeof personalReviewData === 'undefined' || personalReviewData === -1 ?
                         '-' : 
@@ -268,9 +356,9 @@ function Channel(props) {
                     <p>Recent Reviews</p>
                     {reviewList.length > 0 ? 
                     reviewList.map((value, index) => {
-                       return <p key={`latest-reviews-${index}`} style={{cursor:'pointer'}} data-bs-toggle='modal' 
+                       return <p key={`latest-reviews-${index}`} style={{cursor:'pointer', color:'blue'}} data-bs-toggle='modal' 
                        data-bs-target='#reviewShow' onClick={() => setUserReviewData([value.review, value.rating, value.raterid.username])}>
-                           {value.raterid.username} ({value.rating})</p>
+                           {value.raterid.username} ({value.rating}) on {DateTime.fromISO(value.date).toFormat('yyyy LLL dd')}</p>
                     })
                     : <p>None</p>}
                 </div>

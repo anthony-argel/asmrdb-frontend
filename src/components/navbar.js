@@ -1,4 +1,4 @@
-import {Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import React, { useState } from "react";
 import {FaSearch} from 'react-icons/fa';
 
@@ -19,6 +19,12 @@ const NavBar = (props) => {
 
                 <div className='collapse navbar-collapse d-flex ' id='navContent-l'>
                     <ul className='navbar-nav'>
+                        <li className='nav-item'>
+                            <Link to='/channels' className='nav-link text-white'>Channels</Link>
+                        </li>
+                        <li className='nav-item'>
+                            <Link to='/tags' className='nav-link text-white'>Tags</Link>
+                        </li>
                         <li className='nav-item'>
                             <Link to='/discussion' className='nav-link text-white'>Discussion</Link>
                         </li>

@@ -1,20 +1,23 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom"
 
-const Homepage = () => {
+const Homepage = (props) => {
     useEffect(() => {
         document.title = 'ASMRdb';
     }, [])
+
+    useEffect(() => {
+        if(props.apiURL !== '') {
+            console.log('ran');
+        }
+    }, [props.apiURL])
 
     return (
         <div className='container'>
             <div className='row'>
                 <div className='col-12 bg-light'>
-                    <h1>ASMRdb</h1>
-                    <h3>A database for ASMR channels on YouTube</h3>
-                    
-                    
-                    <Link to='/channel/608a04fc8d739f4ce2080ecd'>Demo Channel Link</Link>
+                    <p className='fs-2 text-center'>Recently Added</p>
+                    <hr/>
                 </div>
 
             </div>
