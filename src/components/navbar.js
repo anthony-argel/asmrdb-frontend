@@ -1,24 +1,19 @@
-import {Link, Redirect} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import React, { useState } from "react";
 import {FaSearch} from 'react-icons/fa';
 
 const NavBar = (props) => {
     const [search, setSearch] = useState('');
-    const [redirecting, setRedirecting] = useState(false);
+    const history = useHistory();
 
     const sendSearch = (e) => {
         e.preventDefault();
         if(props.apiURL !== '') {
-            setRedirecting(true)
+            history.push('/search/'+search.split(' ').join('_'))
         }
     }
-
-
-
-
     return (
         <nav className='navbar navbar-light navbar-expand-md shadow mb-5' style={{backgroundColor:"black"}}>
-            {redirecting === true ? <Redirect to={'/search/'+search.split(' ').join('_')} /> : null }
             <div className='container'>
                 <Link to='/' className='navbar-brand text-white'>Home</Link>
 
@@ -32,12 +27,6 @@ const NavBar = (props) => {
                         </li>
                         <li className='nav-item'>
                             <Link to='/tags' className='nav-link text-white'>Tags</Link>
-                        </li>
-                        <li className='nav-item'>
-                            <Link to='/discussion' className='nav-link text-white'>Discussion</Link>
-                        </li>
-                        <li className='nav-item'>
-                            <Link to='/rules' className='nav-link text-white'>Rules</Link>
                         </li>
                         <li className='nav-item'>
                             <Link to='/add' className='nav-link text-white'>Add Channel</Link>

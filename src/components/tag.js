@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import ChannelList from './channellist';
 
 const Tag = (props) => {
     let {id} = useParams();
@@ -29,35 +30,7 @@ const Tag = (props) => {
     
 
     return (
-        <div className='container'>
-            <div className='row bg-light p-2'>
-                <h1 className='text-center'>Tag: {typeof tag !== 'undefined' && tag.name !== '' ? tag.name : null}</h1>
-                <hr/>
-            </div>
-            <div className='row row-cols-1 row-cols-md-4 bg-light p-2 g-4'>
-                {channels.length > 0 ? 
-                    channels.map((value) => {
-                        return (         
-                            <Link to={'/channel/'+value._id} key={value._id} className='col' style={{textDecoration:'none', color:'black'}}>   
-                                <div className='card h-100'> 
-                                    <img src={value.imageurl} className="card-img-top" alt="YouTube profile" style={{width: "100%"}}/>
-                                    <div className="card-body">
-                                        <h5 className="card-title">{value.name}</h5>
-                                        <p className="card-text">Videos: {value.videocount}</p>
-                                        
-                                    </div>
-                                </div>
-                            </Link>
-                        )
-                    })
-                    :
-                    <div className="spinner-border text-success" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                    }
-            </div> 
-                
-        </div>
+        <ChannelList channels={channels} title={typeof tag !== 'undefined' ? 'Tag: ' + tag.name : 'Tag: '}/>
     )
 }
 

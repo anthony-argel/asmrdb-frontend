@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {FaTwitter, FaYoutube} from 'react-icons/fa';
 import {MdClose} from 'react-icons/md'
 import {DateTime} from 'luxon';
@@ -266,12 +266,7 @@ function Channel(props) {
             
             {/* header */}
             <div className='row'>
-                <div className='bg-light col-12 col-lg-4 d-flex justify-content-center p-3' style={{backgroundColor:'green'}}>
-                    {typeof channel === 'undefined' ?  
-                    null : 
-                    <img src={channel.imageurl} alt='channel profile' style={{borderRadius:"50%"}}></img>}
-                </div>
-                <div className='bg-light col-12 col-lg-8 p-3' style={{backgroundColor:'green'}}>
+                <div className='bg-light col-12 col-lg-12 p-3' style={{backgroundColor:'green'}}>
                     {typeof channel === 'undefined' ?  
                         <div className="spinner-border text-success" role="status">
                             <span className="visually-hidden">Loading...</span>
@@ -303,7 +298,7 @@ function Channel(props) {
                             <div><p>Tags:</p>
                             {channelTags.length > 0 ? 
                             channelTags.map((value, index) => {
-                                return <span className='' key={value.tagid}>{value.tagname}<MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value.tagid)}/></span>
+                                return <span className='' key={value.tagid}><Link to={'/tag/'+value._id}>{value.tagname}</Link><MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value.tagid)}/></span>
                             })
                             : null}
                             </div>
