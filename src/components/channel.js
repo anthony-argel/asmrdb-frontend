@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {FaTwitter, FaYoutube, FaPlus} from 'react-icons/fa';
+import {FaTwitter, FaYoutube} from 'react-icons/fa';
 import {MdClose} from 'react-icons/md'
 import {DateTime} from 'luxon';
 
@@ -66,18 +66,10 @@ function Channel(props) {
                 setChannel(res.channel);
                 let reviews = res.ratings;
                 let avgRating = 0;
-                let foundRating = false;
                 let newRatingsArray = [0,0,0,0,0,0,0,0,0,0,0];
                 for(let i = 0; i < reviews.length; i++) {
                     avgRating += reviews[i].rating;
                     newRatingsArray[reviews[i].rating]++;
-                    if(typeof userid !== 'undefined' && userid === reviews[i].raterid._id) {
-                        setPersonalReviewData(reviews[i]);
-                        foundRating = true;
-                    }
-                }
-                if(foundRating === false) {
-                    setPersonalReviewData(-1);
                 }
 
                 reviews.sort((a,b) => {
@@ -89,17 +81,32 @@ function Channel(props) {
                     setReviewList(reviews);
                 }
                 setRatersList(newRatingsArray);
-                setRating(avgRating / reviews.length);
+                if(reviews.length > 0) {
+                    setRating(avgRating / reviews.length);
+                }
                 setNumberOfRaters(reviews.length);
                 setCommentList(res.comments);
                 setAllTags(res.allTags);
-                setChannelTags(res.channelTags);
+                setChannelTags(res.channel.tags);
             });
         }
-    }, [props.apiURL, id, userid, requestingRefresh]);
+    }, [props.apiURL, id, userid, requestingRefresh, props.loggedIn]);
 
     useEffect(() => {
-    }, [channel])
+    }, [channel]);
+
+    useEffect(() => {
+        if(typeof userid !== 'undefined' && reviewList.length > 0) {
+            for(let i = 0; i < reviewList.length; i++) {
+                if(reviewList[i].raterid._id === userid) {
+                    setPersonalReviewData(reviewList[i]);
+                    break;
+                }
+            }
+        }
+    }, [userid, reviewList]);
+
+    
 
     const postComment = (e) => {
         e.preventDefault();
@@ -214,7 +221,6 @@ function Channel(props) {
             }
 
             if(tagId !== 0) {
-                console.log(props.apiURL + '/channel/' +id+'/tag');
                 fetch(props.apiURL + '/channel/' +id+'/tag', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -236,12 +242,11 @@ function Channel(props) {
 
     function deleteTag(e, idToDelete) {
         e.preventDefault();
-        console.log(idToDelete);
         if(props.apiURL !== '') {
             fetch(props.apiURL + '/channel/' +id+'/tag', {
                 method: 'DELETE',
                 body: JSON.stringify({
-                    id: idToDelete
+                    tagid: idToDelete
                 }),
                 headers: {
                     'Content-Type': 'application/json',
@@ -268,33 +273,37 @@ function Channel(props) {
                 </div>
                 <div className='bg-light col-12 col-lg-8 p-3' style={{backgroundColor:'green'}}>
                     {typeof channel === 'undefined' ?  
-                    <div className="spinner-border text-success" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                  : 
+                        <div className="spinner-border text-success" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                        : 
                         <div>
                             <h1>{channel.name}</h1>
                             {typeof channel.aliases !== 'undefined' && channel.aliases !== channel.name ? <h3>Alias: {channel.aliases}</h3> : null}
                             <p>Status: {channel.status}</p>
                             {typeof channel === 'undefined' ? null :
-                            <div>
-                                <p># Channel Views: {channel.viewcount}</p>
-                                <p># Uploaded Videos: {channel.videocount}</p>
-                            </div>
-                    }
+                                <div>
+                                    <p># Channel Views: {channel.viewcount}</p>
+                                    <p># Uploaded Videos: {channel.videocount}</p>
+                                </div>
+                            }
                             
                             <div className='socials'>
-                            {typeof channel === 'undefined' ?  <p>Loading</p> : 
-                               <a href={'https://twitter.com/'+channel.twitter} target="_blank" rel="noopener noreferrer" ><FaTwitter size='2em'/></a>}
-                            <a href={'https://www.youtube.com/channel/'+channel.youtube} target="_blank" rel="noopener noreferrer" ><FaYoutube color='red' size='2em'/></a>
+                                {typeof channel !== 'undefined' && typeof channel.twitter !== 'undefined' ?  
+                               <a href={'https://twitter.com/'+channel.twitter} target="_blank" rel="noopener noreferrer" ><FaTwitter size='2em'/></a>
+                               :
+                                null
+                               }
+                                <a href={'https://www.youtube.com/channel/'+channel.youtube} target="_blank" rel="noopener noreferrer" ><FaYoutube color='red' size='2em'/></a>
 
                             </div>
-                            </div>}  
+                        </div>
+                    }  
                             <hr/>
                             <div><p>Tags:</p>
                             {channelTags.length > 0 ? 
                             channelTags.map((value, index) => {
-                                return <span className='' key={value._id}>{value.tagid.name}<MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value._id)}/></span>
+                                return <span className='' key={value.tagid}>{value.tagname}<MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value.tagid)}/></span>
                             })
                             : null}
                             </div>
@@ -310,7 +319,7 @@ function Channel(props) {
                                 </datalist>
                                 <button type="button" className="btn btn-success" onClick={(e) => addTag(e)}>Add Tag</button>
                             </form>
-                            : 'no kappa'}
+                            : null}
                 </div>
             </div>
 

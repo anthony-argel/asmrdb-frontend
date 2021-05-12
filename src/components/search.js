@@ -1,28 +1,30 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import {useState, useEffect} from 'react';
+import { useParams, Link } from "react-router-dom";
 
-const Channels = (props) => {
+const Search = (props) => {
     const [channels, setChannels] = useState([]);
+    let {searchstring} = useParams();
 
     useEffect(() => {
-        document.title = 'Channels | ASMRdb';
-        if(props.apiURL !== '') {
-            fetch(props.apiURL+'/channel',{
-                method: 'GET',
-                mode: 'cors'
+        if(props.apiURL !== '' && searchstring !== '') {
+            let query = searchstring.split('_').join(' ');
+            fetch(props.apiURL+'/channel/search?query='+query, {
+                method:'GET',
+                mode:'cors'
             })
+            .then(res => res.json())
             .then(res => {
-                if(res.status !== 400) {
-                    return res.json();
-                }
-            })
-            .then(res => setChannels(res.channels));
+                setChannels(res.results);
+                console.log('done');
+            });
         }
-    }, [props.apiURL])
+    }, [props.apiURL, searchstring]);
+
+
 
     return (
         <div className='container'>
-            <div className='row row-cols-1 row-cols-md-4 bg-light p-2 g-4'>
+        <div className='row row-cols-1 row-cols-md-4 bg-light p-2 g-4'>
                 {channels.length > 0 ? 
                     channels.map((value) => {
                         return (         
@@ -46,6 +48,7 @@ const Channels = (props) => {
             </div> 
         </div>
     )
+
 }
 
-export default Channels;
+export default Search;

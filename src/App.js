@@ -1,11 +1,14 @@
 import Login from './components/login';
 import Channel from './components/channel';
+import ChannelForm from './components/channelform';
 import Channels from './components/channels';
 import Register from './components/register';
 import Home from './components/home';
 import NavBar from './components/navbar';
+import Tag from './components/tag';
 import Tags from './components/tags';
 import User from './components/user';
+import Search from './components/search';
 import { useEffect, useState } from "react";
 import './styles/App.css';
 
@@ -63,15 +66,18 @@ function App() {
   return (
     <div className="App">
       <HashRouter hashType={'slash'}>
-        <NavBar setLogin={setLogin} loggedIn={loggedIn}/>
+        <NavBar setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/>
         <Switch>
           <Route path='/' exact><Home apiURL={apiURL === '' ? '' : apiURL}/></Route>
-          <Route path='/channel/:id' exact><Channel apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/channel/:id' exact><Channel loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/add' exact><ChannelForm loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/user/:id' exact><User apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/register' exact><Register loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/tag/:id' exact><Tag loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/tags' exact><Tags loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/login' exact><Login setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>
-          <Route path='/channels' exact><Channels setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>        
+          <Route path='/channels' exact><Channels setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>   
+          <Route path='/search/:searchstring' exact><Search apiURL={apiURL === '' ? '' : apiURL}/></Route>         
         </Switch>
       </HashRouter>
     </div>

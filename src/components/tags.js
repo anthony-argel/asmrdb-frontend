@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Tags = (props) => {
     const [newTagName, setNewTagName] = useState('');
@@ -77,7 +78,7 @@ const Tags = (props) => {
 
                     {approvedTags.length > 0 ? 
                     approvedTags.map((value, index) => {
-                        return <p key={value._id}>{value.name}</p>
+                        return <p><Link key={value._id} to={'/tag/'+value._id}>{value.name}</Link></p>
                     })
                     :
                     <div className="spinner-border text-success" role="status">
