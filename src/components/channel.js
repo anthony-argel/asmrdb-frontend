@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {FaTwitter, FaYoutube} from 'react-icons/fa';
-import {MdClose} from 'react-icons/md'
+import {SiNiconico} from 'react-icons/si';
+import {MdClose} from 'react-icons/md';
 import {DateTime} from 'luxon';
 
 function Channel(props) {
@@ -28,6 +29,13 @@ function Channel(props) {
 
     const [allTags, setAllTags] = useState([]);
     const [channelTags, setChannelTags] = useState([]);
+
+    const [ytStatus, setYTStatus] = useState();
+    const [twitterURL, setTwitterURL] = useState();
+    const [niconicoURL, setNiconicoURL] = useState();
+    const [ytAliases, setYTAliases] = useState();
+
+    const [ytUpdateError, setYTUpdateError] = useState();
 
     const refreshComments = () => {
         if(props.apiURL !== '') {
@@ -64,6 +72,11 @@ function Channel(props) {
             .then(res => {
                 document.title = res.channel.name;
                 setChannel(res.channel);
+                setYTStatus(res.channel.status);
+                setTwitterURL(res.channel.twitter);
+                setNiconicoURL(res.channel.niconico);
+                setYTAliases(res.channel.aliases);
+
                 let reviews = res.ratings;
                 let avgRating = 0;
                 let newRatingsArray = [0,0,0,0,0,0,0,0,0,0,0];
@@ -260,13 +273,54 @@ function Channel(props) {
         }
     }
 
+    function sendChannelEdits(e) {
+        e.preventDefault();
+        if(props.apiURL !== '') {
+            fetch(props.apiURL + '/channel/'+id, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    status: ytStatus,
+                    niconico: niconicoURL,
+                    twitter: twitterURL,
+                    aliases: ytAliases
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization' : 'Bearer ' + token},
+                mode: 'cors'
+            })
+            .then(res => setRequestingRefresh(!requestingRefresh));
+        }
+    }
+
+
+    function refreshYTStats(e) {
+        e.preventDefault();
+        if(props.apiURL !== '') {
+            fetch(props.apiURL + '/channel/'+id+'/refresh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization' : 'Bearer ' + token},
+                mode: 'cors'
+            })
+            .then(res => {
+                if(res.status === 200) {
+                    setRequestingRefresh(!requestingRefresh);
+                }
+                else {
+                    setYTUpdateError('This channel has already been refreshed in the last 24 hours.');
+                }
+            });
+        }
+    }
 
     return (
         <div className='container'>
             
             {/* header */}
-            <div className='row'>
-                <div className='bg-light col-12 col-lg-12 p-3' style={{backgroundColor:'green'}}>
+            <div className='row d-flex justify-content-between'>
+                <div className='bg-light col-12 col-lg-7 p-3' style={{backgroundColor:'green'}}>
                     {typeof channel === 'undefined' ?  
                         <div className="spinner-border text-success" role="status">
                             <span className="visually-hidden">Loading...</span>
@@ -274,7 +328,7 @@ function Channel(props) {
                         : 
                         <div>
                             <h1>{channel.name}</h1>
-                            {typeof channel.aliases !== 'undefined' && channel.aliases !== channel.name ? <h3>Alias: {channel.aliases}</h3> : null}
+                            {typeof channel.aliases !== 'undefined' && channel.aliases !== channel.name ? <p className='fs-4'>Also Known As: {channel.aliases}</p> : null}
                             <p>Status: {channel.status}</p>
                             {typeof channel === 'undefined' ? null :
                                 <div>
@@ -289,22 +343,29 @@ function Channel(props) {
                                :
                                 null
                                }
+                               {typeof channel !== 'undefined' && typeof channel.niconico !== 'undefined' ?
+                                <a href={'https://ch.nicovideo.jp/'+channel.niconico} target="_blank" rel="noopener noreferrer"><SiNiconico size='2em' color='gray'/></a>
+                                :
+                                null 
+                                }
                                 <a href={'https://www.youtube.com/channel/'+channel.youtube} target="_blank" rel="noopener noreferrer" ><FaYoutube color='red' size='2em'/></a>
 
                             </div>
                         </div>
                     }  
                             <hr/>
-                            <div><p>Tags:</p>
-                            {channelTags.length > 0 ? 
-                            channelTags.map((value, index) => {
-                                return <span className='' key={value.tagid}><Link to={'/tag/'+value._id}>{value.tagname}</Link><MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value.tagid)}/></span>
-                            })
-                            : null}
-                            </div>
-                            
+                    <button type="button" className="btn btn-success" data-bs-toggle='modal' data-bs-target='#editForm'>Edit Channel Info</button>
+                    <button type="button" className="btn btn-success mx-3" onClick={(e) => refreshYTStats(e)}>Refresh YouTube Stats</button>
+                    {typeof ytUpdateError !== 'undefined' && ytUpdateError !== '' ? <p className='mt-3' style={{color:'red', marginBottom:'0'}}>{ytUpdateError}</p> : null}    
+                </div>
+
+
+                <div className='bg-light col-12 col-lg-4 p-3' style={{backgroundColor:'green'}}>
+                            <div>
+                            <p className='fs-2 text-center'>Tags</p>
+                            <hr/>
                             {allTags.length > 0 ? 
-                            <form className='mt-3'>
+                            <form className='mt-3 mb-3'>
                                 <label htmlFor='tag'></label>
                                 <input list='tags' name='tag' id='tag'/>
                                 <datalist id='tags'>
@@ -315,6 +376,12 @@ function Channel(props) {
                                 <button type="button" className="btn btn-success" onClick={(e) => addTag(e)}>Add Tag</button>
                             </form>
                             : null}
+                            {channelTags.length > 0 ? 
+                            channelTags.map((value, index) => {
+                                return <span className='' key={value.tagid}><Link to={'/tag/'+value._id}>{value.tagname}</Link><MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value.tagid)}/></span>
+                            })
+                            : null}
+                            </div>
                 </div>
             </div>
 
@@ -412,7 +479,7 @@ function Channel(props) {
                                 <textarea className="form-control" id="reviewText" onChange={e => setFormReview(e.target.value)} rows="3" placeholder='optional' defaultValue={personalReviewData.review}></textarea>}
                                 
                             </div>
-                            <button type="button mt-3 float-end" className="btn btn-primary" >Post Review</button>
+                            <button type="button" className="btn btn-primary mt-3 float-end" >Post Review</button>
                         </form>
                     </div>
                     <div className="modal-footer">
@@ -421,6 +488,66 @@ function Channel(props) {
                     </div>
                 </div>
             </div>
+
+
+
+            {/* Modal Edit */}
+            <div className="modal fade" id="editForm" tabIndex="-1" aria-labelledby="editFormLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="reviewFormLabel">Info</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                        <form onSubmit={(e) => sendChannelEdits(e)}>
+                        <label htmlFor='status'>YouTube Status:</label>
+                            <select className="form-select" aria-label="Activity Select" required id='status' value={ytStatus} onChange={e => setYTStatus(e.target.value)}>
+
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Unknown">Unknown</option>
+                            </select>
+
+
+                            <label htmlFor="twitter" className="form-label">Twitter:</label>
+                            <div className="input-group mb-3">
+                                <span className="input-group-text" id="basic-addon3">@</span>
+                                {typeof twitterURL !== 'undefined' ? 
+                                <input type="text" className="form-control" id="twitter" aria-describedby="basic-addon3" defaultValue={twitterURL} onChange={e => setTwitterURL(e.target.value)}/>
+                                :    
+                                <input type="text" className="form-control" id="twitter" aria-describedby="basic-addon3" onChange={e => setTwitterURL(e.target.value)}/>
+                            }
+                            </div>
+
+
+                            <label htmlFor="nnd" className="form-label">Niconico:</label>
+                            <div className="input-group mb-3">
+                                <span className="input-group-text" id="basic-addon3">https://ch.nicovideo.jp/</span>
+                                {typeof niconicoURL !== 'undefined' ?
+                                <input type="text" className="form-control" id="nnd" aria-describedby="basic-addon3" defaultValue={niconicoURL} onChange={e => setNiconicoURL(e.target.value)}/>
+                                :
+                                <input type="text" className="form-control" id="nnd" aria-describedby="basic-addon3" onChange={e => setNiconicoURL(e.target.value)}/>
+                                }
+                            </div>
+
+
+                            <label htmlFor='alias' className='form-label'>Aliases:</label>
+                            {typeof ytAliases !== 'undefined' ? 
+                            <textarea className='form-control' id='alias' rows='3' defaultValue={ytAliases} onChange={e => setYTAliases(e.target.value)}></textarea>
+                            : <textarea className='form-control' id='alias' rows='3' onChange={e => setYTAliases(e.target.value)}></textarea>}
+                            <button type="submit" className="btn btn-primary mt-3 float-end" >Submit Changes</button>
+
+                        </form>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+
 
 
             {/* comment section */}
