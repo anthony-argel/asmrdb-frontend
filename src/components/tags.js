@@ -23,7 +23,6 @@ const Tags = (props) => {
             })
             .then(res => res.json())
             .then(res => {
-                console.log(res.approved);
                 setApprovedTags(res.approved.sort((a,b) => {return a.name > b.name}));
                 setWaitingTags(res.waiting);
             })
@@ -78,7 +77,7 @@ const Tags = (props) => {
 
                     {approvedTags.length > 0 ? 
                     approvedTags.map((value, index) => {
-                        return <p><Link key={value._id} to={'/tag/'+value._id}>{value.name}</Link></p>
+                        return <p key={value._id}><Link  to={'/tag/'+value._id+'/1'}>{value.name}</Link></p>
                     })
                     :
                     <div className="spinner-border text-success" role="status">

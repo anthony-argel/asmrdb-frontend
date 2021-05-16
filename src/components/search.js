@@ -1,31 +1,41 @@
 import {useState, useEffect} from 'react';
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ChannelList from './channellist';
 
 const Search = (props) => {
     const [channels, setChannels] = useState([]);
-    let {searchstring} = useParams();
+    const [totalChannels, setTotalChannels] = useState(0);
+    const [pages, setPages] = useState();
+    let {searchstring, startpos} = useParams();
 
     useEffect(() => {
         if(props.apiURL !== '' && searchstring !== '') {
             let query = searchstring.split('_').join(' ');
             document.title = query + ' | ASMRdb' 
-            fetch(props.apiURL+'/channel/search?query='+query, {
+            fetch(props.apiURL+'/channel/'+startpos+'/search?query='+query, {
                 method:'GET',
                 mode:'cors'
             })
             .then(res => res.json())
             .then(res => {
-                setChannels(res.results);
-                console.log('done');
+                setChannels(res.channels);
+                setTotalChannels(res.totalChannels);
+                
+                let estimatedPages = Math.ceil(res.totalchannels / 40.0);
+                if(estimatedPages <= 0) {
+                    setPages(1);
+                }
+                else {
+                    setPages(estimatedPages);
+                }
             });
         }
-    }, [props.apiURL, searchstring]);
+    }, [props.apiURL, searchstring, startpos]);
 
 
 
     return (
-        <ChannelList channels={channels} title={'Search: ' + searchstring.split('-').join(' ')}/>
+        <ChannelList channels={channels} totalresults={totalChannels} title={'Search: ' + searchstring.split('-').join(' ')} pages={pages}/>
     )
 
 }

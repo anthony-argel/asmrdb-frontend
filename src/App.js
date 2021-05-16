@@ -23,7 +23,7 @@ function App() {
       return;
     }
 
-    fetch('http://localhost:3000/user/verify',{
+    fetch('https://dry-hollows-28901.herokuapp.com/user/verify',{
       method:'GET', 
       headers: { 'Content-Type': 'application/json',
       'Authorization' : 'Bearer ' + localStorage.getItem('token') },
@@ -56,7 +56,7 @@ function App() {
   }, [loggedIn])
 
   useEffect(() => {
-      setApiUrl("http://localhost:3000");
+      setApiUrl("https://dry-hollows-28901.herokuapp.com");
       verifyToken();
   }, [])
 
@@ -73,11 +73,11 @@ function App() {
           <Route path='/add' exact><ChannelForm loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/user/:id' exact><User apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/register' exact><Register loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
-          <Route path='/tag/:id' exact><Tag loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/tag/:id/:startpos' exact><Tag loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/tags' exact><Tags loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/login' exact><Login setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>
-          <Route path='/channels' exact><Channels setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>   
-          <Route path='/search/:searchstring' exact><Search apiURL={apiURL === '' ? '' : apiURL}/></Route>         
+          <Route path='/channels/:startpos' exact><Channels setLogin={setLogin} loggedIn={loggedIn} apiURL={apiURL}/></Route>   
+          <Route path='/search/:searchstring/:startpos' exact><Search apiURL={apiURL === '' ? '' : apiURL}/></Route>         
         </Switch>
       </HashRouter>
     </div>

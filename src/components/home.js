@@ -68,6 +68,16 @@ const Homepage = (props) => {
                                     <div className="card-body">
                                         <h5 className="card-title">{value.name}</h5>
                                         <p className="card-text">Videos: {value.videocount}</p>
+                                        {
+                                            typeof value.tags !== 'undefined' && value.tags.length > 0 ?
+                                                <p>
+                                                    {value.tags.map((val, ind) => {
+                                                        return <span>{val.tagname}{ind + 1 !== value.tags.length ? ', ' : ' '}</span>
+                                                    })}
+                                                </p>
+                                                :
+                                                null
+                                        }
                                         
                                     </div>
                                 </div>
@@ -89,7 +99,7 @@ const Homepage = (props) => {
                         {tags.length > 0 ? 
                             tags.map((value) => {
                                 return (
-                                <Link key={value._id} to={'/tag/' +value._id}>
+                                <Link key={value._id} to={'/tag/' +value._id +'/1'}>
                                     <p>{value.name}</p>
                                 </Link>
                                 )
@@ -100,7 +110,7 @@ const Homepage = (props) => {
                         </div>
                         }
                 </div>
-                <div className='col-12 col-lg-4 text-center'>
+                <div className='col-12 col-lg-4 text-center '>
                     <h2>Latest Reviews</h2>
                     <hr/>
                     {reviews.length > 0 ? 

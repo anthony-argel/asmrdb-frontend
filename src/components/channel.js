@@ -356,8 +356,10 @@ function Channel(props) {
                         </div>
                     }  
                             <hr/>
+                     {props.loggedin ?        
                     <button type="button" className="btn btn-success" data-bs-toggle='modal' data-bs-target='#editForm'>Edit Channel Info</button>
-                    <button type="button" className="btn btn-success mx-3" onClick={(e) => refreshYTStats(e)}>Refresh YouTube Stats</button>
+                     :
+                     null}<button type="button" className="btn btn-success mx-3" onClick={(e) => refreshYTStats(e)}>Refresh YouTube Stats</button>
                     {typeof ytUpdateError !== 'undefined' && ytUpdateError !== '' ? <p className='mt-3' style={{color:'red', marginBottom:'0'}}>{ytUpdateError}</p> : null}    
                 </div>
 
@@ -380,7 +382,16 @@ function Channel(props) {
                             : null}
                             {channelTags.length > 0 ? 
                             channelTags.map((value, index) => {
-                                return <span className='' key={value._id}><Link to={'/tag/'+value._id}>{value.tagname}</Link><MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value._id)}/></span>
+                                return <span className='' key={value._id}><Link to={'/tag/'+value._id+'/1'}>{value.tagname}</Link>
+                                {props.loggedIn === true ? 
+                                        <MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value._id)}/>
+                                        :
+                                        (index + 1) !== channelTags.length ?
+                                        <span>, </span>
+                                        :
+                                        null
+                                }
+                                </span>
                             })
                             : null}
                             </div>
@@ -566,7 +577,7 @@ function Channel(props) {
                         {typeof commentList !== 'undefined' && commentList.length > 0 ? 
                         commentList.map((value, index) => {
                             return  <div key={value.authorid._id + index}>
-                                    <p className='fs-2 fw-bold'>{value.authorid.username}<span className='fs-5 fw-normal'>{DateTime.fromISO(value.date).toFormat('yyyy LLL dd')}</span>
+                                    <p className='fs-2 fw-bold'>{value.authorid.username}<span className='fs-5 fw-normal'> {DateTime.fromISO(value.date).toFormat('yyyy LLL dd')}</span>
                                     
                                     {typeof userid !== 'undefined' && value.authorid._id === userid ? <MdClose color='red' cursor='pointer' size='1.3em' style={{float: 'right'}} onClick={()=> deleteComment(value._id, value.authorid._id)}/>: null}</p>
                                     <p className='fs-5'>{value.comment}</p>
