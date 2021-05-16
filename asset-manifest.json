@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/asmrdb-frontend/static/css/main.9e3f3907.chunk.css",
+    "main.js": "/asmrdb-frontend/static/js/main.81aca2a6.chunk.js",
+    "main.js.map": "/asmrdb-frontend/static/js/main.81aca2a6.chunk.js.map",
+    "runtime-main.js": "/asmrdb-frontend/static/js/runtime-main.b3b3a273.js",
+    "runtime-main.js.map": "/asmrdb-frontend/static/js/runtime-main.b3b3a273.js.map",
+    "static/js/2.e6f53508.chunk.js": "/asmrdb-frontend/static/js/2.e6f53508.chunk.js",
+    "static/js/2.e6f53508.chunk.js.map": "/asmrdb-frontend/static/js/2.e6f53508.chunk.js.map",
+    "index.html": "/asmrdb-frontend/index.html",
+    "static/css/main.9e3f3907.chunk.css.map": "/asmrdb-frontend/static/css/main.9e3f3907.chunk.css.map",
+    "static/js/2.e6f53508.chunk.js.LICENSE.txt": "/asmrdb-frontend/static/js/2.e6f53508.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.b3b3a273.js",
+    "static/js/2.e6f53508.chunk.js",
+    "static/css/main.9e3f3907.chunk.css",
+    "static/js/main.81aca2a6.chunk.js"
+  ]
+}
