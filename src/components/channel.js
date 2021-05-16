@@ -163,6 +163,7 @@ function Channel(props) {
     const submitReview = (e) => {
         e.preventDefault();
         let sendRating = 0;
+        console.log('submitting...')
         let sendReview = ' ';
         if(typeof formRating === 'undefined') {
             if(typeof personalReviewData !== 'undefined') {
@@ -217,6 +218,7 @@ function Channel(props) {
                     Array.from(document.querySelectorAll("textarea")).forEach(
                         input => (input.value = "")
                     );
+                    setPersonalReviewData(-1);
                 }
             })
         }
@@ -320,7 +322,7 @@ function Channel(props) {
             
             {/* header */}
             <div className='row d-flex justify-content-between'>
-                <div className='bg-light col-12 col-lg-7 p-3' style={{backgroundColor:'green'}}>
+                <div className='bg-light col-12 col-lg-8 p-3' style={{backgroundColor:'green'}}>
                     {typeof channel === 'undefined' ?  
                         <div className="spinner-border text-success" role="status">
                             <span className="visually-hidden">Loading...</span>
@@ -328,7 +330,7 @@ function Channel(props) {
                         : 
                         <div>
                             <h1>{channel.name}</h1>
-                            {typeof channel.aliases !== 'undefined' && channel.aliases !== channel.name ? <p className='fs-4'>Also Known As: {channel.aliases}</p> : null}
+                            {typeof channel.aliases !== 'undefined' && channel.aliases !== channel.name && channel.aliases !== '' ? <p className='fs-4'>Also Known As: {channel.aliases}</p> : null}
                             <p>Status: {channel.status}</p>
                             {typeof channel === 'undefined' ? null :
                                 <div>
@@ -338,12 +340,12 @@ function Channel(props) {
                             }
                             
                             <div className='socials'>
-                                {typeof channel !== 'undefined' && typeof channel.twitter !== 'undefined' ?  
+                                {typeof channel !== 'undefined' && typeof channel.twitter !== 'undefined' && channel.twitter !== '' ?  
                                <a href={'https://twitter.com/'+channel.twitter} target="_blank" rel="noopener noreferrer" ><FaTwitter size='2em'/></a>
                                :
                                 null
                                }
-                               {typeof channel !== 'undefined' && typeof channel.niconico !== 'undefined' ?
+                               {typeof channel !== 'undefined' && typeof channel.niconico !== 'undefined' && channel.niconico !== '' ?
                                 <a href={'https://ch.nicovideo.jp/'+channel.niconico} target="_blank" rel="noopener noreferrer"><SiNiconico size='2em' color='gray'/></a>
                                 :
                                 null 
@@ -365,7 +367,7 @@ function Channel(props) {
                             <p className='fs-2 text-center'>Tags</p>
                             <hr/>
                             {allTags.length > 0 ? 
-                            <form className='mt-3 mb-3'>
+                            <form className='mt-3 mb-3' onSubmit={(e) => addTag(e)}>
                                 <label htmlFor='tag'></label>
                                 <input list='tags' name='tag' id='tag'/>
                                 <datalist id='tags'>
@@ -373,12 +375,12 @@ function Channel(props) {
                                         return <option key={value._id} data-tag-id={value._id} value={value.name}></option>
                                     })}
                                 </datalist>
-                                <button type="button" className="btn btn-success" onClick={(e) => addTag(e)}>Add Tag</button>
+                                <button type="submit" className="btn btn-success">Add Tag</button>
                             </form>
                             : null}
                             {channelTags.length > 0 ? 
                             channelTags.map((value, index) => {
-                                return <span className='' key={value.tagid}><Link to={'/tag/'+value._id}>{value.tagname}</Link><MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value.tagid)}/></span>
+                                return <span className='' key={value._id}><Link to={'/tag/'+value._id}>{value.tagname}</Link><MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value._id)}/></span>
                             })
                             : null}
                             </div>
@@ -429,7 +431,7 @@ function Channel(props) {
                     reviewList.map((value, index) => {
                        return <p key={`latest-reviews-${index}`} style={{cursor:'pointer', color:'blue'}} data-bs-toggle='modal' 
                        data-bs-target='#reviewShow' onClick={() => setUserReviewData([value.review, value.rating, value.raterid.username])}>
-                           {value.raterid.username} ({value.rating}) on {DateTime.fromISO(value.date).toFormat('yyyy LLL dd')}</p>
+                           {value.raterid.username} {value.rating}/10 - {DateTime.fromISO(value.date).toFormat('yyyy LLL dd')}</p>
                     })
                     : <p>None</p>}
                 </div>
@@ -475,11 +477,11 @@ function Channel(props) {
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="reviewText" className="form-label">Review</label>
-                                {typeof personalReviewData === 'undefined' ? <textarea className="form-control" id="reviewText" onChange={e => setFormReview(e.target.value)} rows="3" placeholder='optional'></textarea> : 
-                                <textarea className="form-control" id="reviewText" onChange={e => setFormReview(e.target.value)} rows="3" placeholder='optional' defaultValue={personalReviewData.review}></textarea>}
+                                {typeof personalReviewData === 'undefined' ? <textarea className="form-control" id="reviewText" onChange={e => setFormReview(e.target.value)} rows="3" placeholder='optional' maxLength='1000'></textarea> : 
+                                <textarea className="form-control" id="reviewText" onChange={e => setFormReview(e.target.value)} rows="3" placeholder='optional' defaultValue={personalReviewData.review} maxLength='1000'></textarea>}
                                 
                             </div>
-                            <button type="button" className="btn btn-primary mt-3 float-end" >Post Review</button>
+                            <button type="submit" className="btn btn-primary mt-3 float-end" >Post Review</button>
                         </form>
                     </div>
                     <div className="modal-footer">

@@ -112,7 +112,7 @@ const Homepage = (props) => {
                         )
                     })
                     :
-                    'poggers'}
+                    null}
                 </div>
                 <div className='col-12 col-lg-4'>
                     <h2 className='text-center'>Statistics</h2>

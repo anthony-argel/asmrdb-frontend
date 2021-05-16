@@ -22,11 +22,18 @@ function Login(props) {
                     mode: 'cors'
                 })
                 .then(res => {
+                    if(res.status === 200) {
+                        setAccountCreated(true);
+                        return;
+                    }
                     return res.json();
                 })
                 .then(res => {
-                    if(res.message !== 'account created') {
-                        setErrorList([res.message]);
+                    if(typeof res === 'undefined') {
+                        return;
+                    }
+                    if(typeof res.errors !== 'undefined' || res.errors.length > 0) {
+                        setErrorList(res.errors);
                     }
                     else {
                         setAccountCreated(true);
@@ -73,7 +80,7 @@ function Login(props) {
                     </div>
                     <button type='submit' className='btn btn-primary'>Submit</button>
                     {errorList.length > 0 ? 
-                        <div className='text-center'>
+                        <div className='text-center mt-3'>
                             {errorList.map((value, index) => {
                                 return <p key={index} className='text-danger'>{value}</p>
                             })}

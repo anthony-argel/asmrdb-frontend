@@ -29,7 +29,10 @@ const NavBar = (props) => {
                             <Link to='/tags' className='nav-link text-white'>Tags</Link>
                         </li>
                         <li className='nav-item'>
+                            {props.loggedIn === true ? 
                             <Link to='/add' className='nav-link text-white'>Add Channel</Link>
+                            :
+                            null}
                         </li>
                     </ul>
                 </div>

@@ -55,9 +55,10 @@ const ChannelForm = (props) => {
 
     return (
         <div className='container'>
+            {props.loggedIn !== true ? <Redirect to={'/login'}/> : null}
             {redirecting === true ? <Redirect to={redirectURL}/>: null}
-            <div className='row d-flex justify-content-center'>
-                <div className='col-6 bg-light p-2'>
+            <div className='row d-flex justify-content-center mb-3'>
+                <div className='col-12 col-lg-6 bg-light p-2'>
                     <h1 className='text-center'>Channel Form</h1>
                     <form onSubmit={e => addChannel(e)}>
                         <label htmlFor="youtube-url" className="form-label">YouTube URL</label>
@@ -97,7 +98,14 @@ const ChannelForm = (props) => {
                         </div>
                         <button type="submit" className="btn btn-success mt-3">Add Channel</button>
                     </form>
-                    {errors === true ? 'Something went wrong. Please check your input' : null}
+                    {errors === true ? 
+                    <div className='mt-3'>
+                        <p>Something went wrong. Please make sure your input only contains:</p>
+                        <ul>
+                            <li>numbers and letters (a - z, A - Z, 0 - 9)</li>
+                            <li>spaces, underscores, and dashes ( , _, -)</li>
+                        </ul>
+                        </div> : null}
                 </div>
             </div>
         </div>
