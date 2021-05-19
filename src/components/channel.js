@@ -63,6 +63,7 @@ function Channel(props) {
     }, []);
 
     useEffect(() => {
+        console.log(props.loggedIn);
         if(props.apiURL !== '') {
             fetch(props.apiURL+"/channel/"+id+'/all', {
                 method: 'GET',
@@ -356,10 +357,10 @@ function Channel(props) {
                         </div>
                     }  
                             <hr/>
-                     {props.loggedin ?        
+                     {props.loggedIn === true ?        
                     <button type="button" className="btn btn-success" data-bs-toggle='modal' data-bs-target='#editForm'>Edit Channel Info</button>
                      :
-                     null}<button type="button" className="btn btn-success mx-3" onClick={(e) => refreshYTStats(e)}>Refresh YouTube Stats</button>
+                    null}<button type="button" className="btn btn-success mx-3" onClick={(e) => refreshYTStats(e)}>Refresh YouTube Stats</button>
                     {typeof ytUpdateError !== 'undefined' && ytUpdateError !== '' ? <p className='mt-3' style={{color:'red', marginBottom:'0'}}>{ytUpdateError}</p> : null}    
                 </div>
 

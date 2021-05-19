@@ -44,7 +44,7 @@ function Login(props) {
     <div className='container'>
         {props.loggedIn === true ? <Redirect push to='/'/> : null}
         <div className='row justify-content-center'>
-            <div className='col-6 bg-light p-4'>
+            <div className='col-12 col-lg-6  bg-light p-4'>
             <h1 className='text-center'>Login</h1>
                 <form onSubmit={login}>
                     <div className='mb-3'>

@@ -54,7 +54,7 @@ function Login(props) {
         {accountCreated === true ? <Redirect push to='/login'/> : null}
         {props.loggedIn === true ? <Redirect push to='/'/> : null}
         <div className='row justify-content-center'>
-            <div className='col-6 bg-light p-4'>
+            <div className='col-12 col-lg-6 bg-light p-4'>
             <h1 className='text-center'>Register</h1>
                 <form onSubmit={register}>
                     <div className='mb-3'>
