@@ -63,7 +63,6 @@ function Channel(props) {
     }, []);
 
     useEffect(() => {
-        console.log(props.loggedIn);
         if(props.apiURL !== '') {
             fetch(props.apiURL+"/channel/"+id+'/all', {
                 method: 'GET',
@@ -385,10 +384,10 @@ function Channel(props) {
                             channelTags.map((value, index) => {
                                 return <span className='' key={value._id}><Link to={'/tag/'+value._id+'/1'}>{value.tagname}</Link>
                                 {props.loggedIn === true ? 
-                                        <MdClose color='red' size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value._id)}/>
+                                        <MdClose color='red' key={value._id} size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value._id)}/>
                                         :
                                         (index + 1) !== channelTags.length ?
-                                        <span>, </span>
+                                        <span key={value._id}>, </span>
                                         :
                                         null
                                 }
@@ -578,12 +577,12 @@ function Channel(props) {
                         {typeof commentList !== 'undefined' && commentList.length > 0 ? 
                         commentList.map((value, index) => {
                             return  <div key={value.authorid._id + index}>
-                                    <p className='fs-2 fw-bold'>{value.authorid.username}<span className='fs-5 fw-normal'> {DateTime.fromISO(value.date).toFormat('yyyy LLL dd')}</span>
-                                    
-                                    {typeof userid !== 'undefined' && value.authorid._id === userid ? <MdClose color='red' cursor='pointer' size='1.3em' style={{float: 'right'}} onClick={()=> deleteComment(value._id, value.authorid._id)}/>: null}</p>
-                                    <p className='fs-5'>{value.comment}</p>
-                                    {index !== commentList.length - 1 ? <hr/> : null}
-                                </div>  
+                                        <p className='fs-2 fw-bold'>{value.authorid.username}<span className='fs-5 fw-normal'> {DateTime.fromISO(value.date).toFormat('yyyy LLL dd')}</span>
+                                        
+                                        {typeof userid !== 'undefined' && value.authorid._id === userid ? <MdClose color='red' cursor='pointer' size='1.3em' style={{float: 'right'}} onClick={()=> deleteComment(value._id, value.authorid._id)}/>: null}</p>
+                                        <p className='fs-5'>{value.comment}</p>
+                                        {index !== commentList.length - 1 ? <hr/> : null}
+                                    </div>  
                         })
                         : <p>No comments</p>}
                     </div>
