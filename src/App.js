@@ -26,7 +26,7 @@ function App() {
       return;
     }
 
-    fetch('http://localhost:3000/user/verify',{
+    fetch('https://dry-hollows-28901.herokuapp.com/user/verify',{
       method:'GET', 
       headers: { 'Content-Type': 'application/json',
       'Authorization' : 'Bearer ' + localStorage.getItem('token') },
@@ -59,8 +59,7 @@ function App() {
   }, [loggedIn])
 
   useEffect(() => {
-      setApiUrl('http://localhost:3000')
-      //setApiUrl("https://dry-hollows-28901.herokuapp.com");
+      setApiUrl("https://dry-hollows-28901.herokuapp.com");
       verifyToken();
   }, [])
 
