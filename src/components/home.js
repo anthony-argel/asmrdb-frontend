@@ -72,7 +72,7 @@ const Homepage = (props) => {
                                             typeof value.tags !== 'undefined' && value.tags.length > 0 ?
                                                 <p>
                                                     {value.tags.map((val, ind) => {
-                                                        return <span>{val.tagname}{ind + 1 !== value.tags.length ? ', ' : ' '}</span>
+                                                        return <span key={val._id}>{val.tagname}{ind + 1 !== value.tags.length ? ', ' : ' '}</span>
                                                     })}
                                                 </p>
                                                 :

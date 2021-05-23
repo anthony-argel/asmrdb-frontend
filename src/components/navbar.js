@@ -34,6 +34,9 @@ const NavBar = (props) => {
                             :
                             null}
                         </li>
+                        <li className='nav-item'>
+                            <Link to='/boards' className='nav-link text-white'>Discussion</Link>
+                        </li>
                     </ul>
                 </div>
 

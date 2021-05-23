@@ -8,6 +8,9 @@ import NavBar from './components/navbar';
 import Tag from './components/tag';
 import Tags from './components/tags';
 import User from './components/user';
+import Boards from './components/boards';
+import Thread from './components/thread';
+import Board from './components/board';
 import Search from './components/search';
 import { useEffect, useState } from "react";
 import './styles/App.css';
@@ -23,7 +26,7 @@ function App() {
       return;
     }
 
-    fetch('https://dry-hollows-28901.herokuapp.com/user/verify',{
+    fetch('http://localhost:3000/user/verify',{
       method:'GET', 
       headers: { 'Content-Type': 'application/json',
       'Authorization' : 'Bearer ' + localStorage.getItem('token') },
@@ -56,7 +59,8 @@ function App() {
   }, [loggedIn])
 
   useEffect(() => {
-      setApiUrl("https://dry-hollows-28901.herokuapp.com");
+      setApiUrl('http://localhost:3000')
+      //setApiUrl("https://dry-hollows-28901.herokuapp.com");
       verifyToken();
   }, [])
 
@@ -71,6 +75,9 @@ function App() {
           <Route path='/' exact><Home apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/channel/:id' exact><Channel loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/add' exact><ChannelForm loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/boards' exact><Boards loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/board/:id' exact><Board loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
+          <Route path='/thread/:id' exact><Thread loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/user/:id' exact><User apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/register' exact><Register loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
           <Route path='/tag/:id/:startpos' exact><Tag loggedIn={loggedIn} apiURL={apiURL === '' ? '' : apiURL}/></Route>
