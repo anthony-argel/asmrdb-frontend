@@ -14,7 +14,6 @@ function Login(props) {
     function login(e){
         if(props.apiURL !== '') {
             e.preventDefault();
-            console.log('logging in...');
             fetch(props.apiURL + '/user/login', {
                 method: 'POST',
                 body: JSON.stringify({email: email, password: password}),

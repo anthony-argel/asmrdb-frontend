@@ -64,7 +64,8 @@ const Homepage = (props) => {
                     {channels.map((value) => {
                         return (        
                             <Link to={'/channel/'+value._id} key={value._id} className='col-4' style={{textDecoration:'none', color:'black'}}>   
-                                <div className='card h-100'> 
+                                <div className='card h-100'>
+                                    <img src={value.imageurl} className="card-img-top" alt={value.name}></img> 
                                     <div className="card-body">
                                         <h5 className="card-title">{value.name}</h5>
                                         <p className="card-text">Videos: {value.videocount}</p>

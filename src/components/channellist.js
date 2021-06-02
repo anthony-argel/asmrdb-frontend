@@ -10,19 +10,24 @@ const ChannelList = (props) => {
                     <hr/> 
                     {props.channels.length > 0 ? 
                         props.channels.map((value, index) => {
-                            return (         
-                                <Link to={'/channel/'+value._id} key={value._id} style={{textDecoration:'none', color:'black'}}>   
-                                    <div className='lh-1'> 
-                                        <p className='fs-4 fw-bold'>{value.name}</p>
-                                        <p>Videos: {value.videocount}</p>
-                                        <p>Tags: {value.tags.map((tagvals, index) => {
-                                            return (
-                                                <span key={tagvals._id}>{tagvals.tagname}{index + 1 !== value.tags.length ? ', ' : ' '}</span>
-                                            )
-                                        })}</p>
-                                    </div>
+                            return (          
+                                    <div className='lh-1' key={value._id}>
+                                        <div className='channel d-flex'>
+                                        <img src={value.imageurl} alt={value.name}></img>
+                                        <div className='mx-3'>
+                                            <Link to={'/channel/'+value._id}>  
+                                                <p className='fs-4 fw-bold'>{value.name}</p>
+                                            </Link> 
+                                            <p>Videos: {value.videocount}</p>
+                                            <p>Tags: {value.tags.map((tagvals, index) => {
+                                                return (
+                                                    <span key={tagvals._id}>{tagvals.tagname}{index + 1 !== value.tags.length ? ', ' : ' '}</span>
+                                                )
+                                            })}</p>
+                                        </div>
+                                        </div>
                                     {index + 1 !== props.channels.length ? <hr/> : null}
-                                </Link>
+                                    </div>
                             )
                         })
                     :

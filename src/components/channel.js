@@ -163,7 +163,6 @@ function Channel(props) {
     const submitReview = (e) => {
         e.preventDefault();
         let sendRating = 0;
-        console.log('submitting...')
         let sendReview = ' ';
         if(typeof formRating === 'undefined') {
             if(typeof personalReviewData !== 'undefined') {
@@ -321,7 +320,12 @@ function Channel(props) {
         <div className='container'>
             
             {/* header */}
-            <div className='row d-flex justify-content-between'>
+            <div className='row bg-light'>
+                <div className='col-12 col-lg-3 p-2'>
+                    {typeof channel === 'undefined' ? 
+                    null :
+                    <img src={channel.imageurl} alt={channel.name} className='h-100 w-100 rounded-circle text-center'></img>}
+                </div>
                 <div className='bg-light col-12 col-lg-8 p-3' style={{backgroundColor:'green'}}>
                     {typeof channel === 'undefined' ?  
                         <div className="spinner-border text-success" role="status">
@@ -362,40 +366,41 @@ function Channel(props) {
                     null}<button type="button" className="btn btn-success mx-3" onClick={(e) => refreshYTStats(e)}>Refresh YouTube Stats</button>
                     {typeof ytUpdateError !== 'undefined' && ytUpdateError !== '' ? <p className='mt-3' style={{color:'red', marginBottom:'0'}}>{ytUpdateError}</p> : null}    
                 </div>
+            </div>
 
-
-                <div className='bg-light col-12 col-lg-4 p-3' style={{backgroundColor:'green'}}>
-                            <div>
-                            <p className='fs-2 text-center'>Tags</p>
-                            <hr/>
-                            {allTags.length > 0 ? 
-                            <form className='mt-3 mb-3' onSubmit={(e) => addTag(e)}>
-                                <label htmlFor='tag'></label>
-                                <input list='tags' name='tag' id='tag'/>
-                                <datalist id='tags'>
-                                    {allTags.map((value, index) => {
-                                        return <option key={value._id} data-tag-id={value._id} value={value.name}></option>
-                                    })}
-                                </datalist>
-                                <button type="submit" className="btn btn-success">Add Tag</button>
-                            </form>
-                            : null}
-                            {channelTags.length > 0 ? 
-                            channelTags.map((value, index) => {
-                                return <span className='' key={value._id}><Link to={'/tag/'+value._id+'/1'}>{value.tagname}</Link>
-                                {props.loggedIn === true ? 
-                                        <MdClose color='red' key={value._id} size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value._id)}/>
-                                        :
-                                        (index + 1) !== channelTags.length ?
-                                        <span key={value._id}>, </span>
-                                        :
-                                        null
-                                }
-                                </span>
-                            })
-                            : null}
-                            </div>
+            <div className='row mt-3'>
+            <div className='bg-light col-12  p-3' style={{backgroundColor:'green'}}>
+                <div>
+                <p className='fs-2 text-center'>Tags</p>
+                <hr/>
+                {allTags.length > 0 ? 
+                <form className='mt-3 mb-3' onSubmit={(e) => addTag(e)}>
+                    <label htmlFor='tag'></label>
+                    <input list='tags' name='tag' id='tag'/>
+                    <datalist id='tags'>
+                        {allTags.map((value, index) => {
+                            return <option key={value._id} data-tag-id={value._id} value={value.name}></option>
+                        })}
+                    </datalist>
+                    <button type="submit" className="btn btn-success">Add Tag</button>
+                </form>
+                : null}
+                {channelTags.length > 0 ? 
+                channelTags.map((value, index) => {
+                    return <span className='' key={value._id}><Link to={'/tag/'+value._id+'/1'}>{value.tagname}</Link>
+                    {props.loggedIn === true ? 
+                            <MdClose color='red' key={value._id} size='1.5em' cursor='pointer' onClick={e => deleteTag(e, value._id)}/>
+                            :
+                            (index + 1) !== channelTags.length ?
+                            <span key={value._id}>, </span>
+                            :
+                            null
+                    }
+                    </span>
+                })
+                : null}
                 </div>
+            </div>
             </div>
 
 
