@@ -585,7 +585,7 @@ function Channel(props) {
                                         <p className='fs-2 fw-bold'>{value.authorid.username}<span className='fs-5 fw-normal'> {DateTime.fromISO(value.date).toFormat('yyyy LLL dd')}</span>
                                         
                                         {typeof userid !== 'undefined' && value.authorid._id === userid ? <MdClose color='red' cursor='pointer' size='1.3em' style={{float: 'right'}} onClick={()=> deleteComment(value._id, value.authorid._id)}/>: null}</p>
-                                        <p className='fs-5'>{value.comment}</p>
+                                        <p className='fs-5' style={{whiteSpace: "pre-wrap"}}>{value.comment}</p>
                                         {index !== commentList.length - 1 ? <hr/> : null}
                                     </div>  
                         })

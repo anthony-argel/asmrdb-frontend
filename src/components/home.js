@@ -52,7 +52,7 @@ const Homepage = (props) => {
             <div className='row bg-light mb-3 p-2'> 
                 <h1>ASMR Database</h1>
                 <hr/>
-                <p>The goal of ASMRdb.net is document all ASMR YouTubers. <br/>By collecting them all in one place, ASMR enthusiasts will have an easier time looking for new channels to listen to. This website is built as a wiki, so feel free to add channels, tags, and join in on discussions.</p>
+                <p>The goal of ASMRdb.net is to document all ASMR YouTubers. <br/>By collecting them all in one place, ASMR enthusiasts will have an easier time looking for new channels to listen to. This website is built as a wiki, so feel free to add channels, tags, and join in on discussions.</p>
             </div>
 
             <div className='row bg-light mb-3 p-2'>

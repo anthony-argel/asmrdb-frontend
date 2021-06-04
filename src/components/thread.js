@@ -96,7 +96,7 @@ const Thread = (props) => {
                         <div className='lh-1'>
                             <h1>{threadData.title}</h1>
                             <p className='mb-2'>Posted by {typeof threadData.author !== 'undefined' ? threadData.author.username: 'DELETED'} on {DateTime.fromISO(threadData.date).toFormat('yyyy LLL dd')}</p>
-                            {typeof threadData.comment !== 'undefined' ? <p className='fs-3'>{threadData.comment}</p> : null}
+                            {typeof threadData.comment !== 'undefined' ? <p className='fs-3' style={{whiteSpace: "pre-wrap"}}>{threadData.comment}</p> : null}
                             {typeof threadData.author !== 'undefined' && threadData.author._id === userId ? 
                             <p><span style={{color:'blue', cursor:'pointer'}} data-bs-toggle="modal" data-bs-target="#editCommentModal">Edit</span> <span style={{color:'blue', cursor:'pointer'}} className='mx-5' onClick={(e) => deletePost(e)}>Delete</span></p>
                             :
@@ -140,7 +140,7 @@ const Thread = (props) => {
                                     }
                                     </p>
                                     <hr className='mt-0'/>
-                                    <p className='mb-0'>{value.comment}</p>
+                                    <p className='mb-0' style={{whiteSpace: "pre-wrap"}}>{value.comment}</p>
                                 </div>
                             )
                         })
