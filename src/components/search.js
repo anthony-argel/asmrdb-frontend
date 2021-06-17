@@ -11,6 +11,7 @@ const Search = (props) => {
     useEffect(() => {
         if(props.apiURL !== '' && searchstring !== '') {
             let query = searchstring.split('_').join(' ');
+            query = decodeURIComponent(query);
             document.title = query + ' | ASMRdb' 
             fetch(props.apiURL+'/channel/'+startpos+'/search?query='+query, {
                 method:'GET',
@@ -35,7 +36,7 @@ const Search = (props) => {
 
 
     return (
-        <ChannelList channels={channels} totalresults={totalChannels} title={'Search: ' + searchstring.split('-').join(' ')} pages={pages}/>
+        <ChannelList channels={channels} totalresults={totalChannels} title={'Search: ' + decodeURIComponent(searchstring.split('-').join(' '))} pages={pages}/>
     )
 
 }
