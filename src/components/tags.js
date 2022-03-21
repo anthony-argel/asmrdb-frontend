@@ -73,7 +73,7 @@ const Tags = (props) => {
     }
 
     return (
-        <div className="container mb-3">
+        <div className="container">
             <div className="row bg-light">
                 <div className="col-12 col-lg-2 p-2 text-center">
                     <button
